@@ -1,0 +1,162 @@
+package com.milan.krizickruzic;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    // zuti = 0, crveni = 1
+    int aktivniIgrac=0;
+
+    // prazna polja= 2
+
+    int[] praznaPolja={2,2,2,2,2,2,2,2,2};
+
+    // pozicije koje pobijedjuju u igri
+
+    int [][] pobjednickaMjesta={{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
+
+    boolean aktivnaIgra=true;
+
+
+// metoda koja se poziva odabirom pozicije u mreži
+
+    public void dropIn(View view){
+
+        //dohvaćanje pozicije (tag) na koju je igrač kliknuo
+
+        ImageView brojac = (ImageView) view;
+        System.out.println(brojac.getTag().toString());
+        int odabranoPolje = Integer.parseInt(brojac.getTag().toString());
+
+        // provjer je li polje na koje je igrač kliknuo prazno i je li igra aktivna
+
+        if(praznaPolja[odabranoPolje]==2 && aktivnaIgra){
+
+            //postavljanje 0 ili 1 u odabrano polje, ovisno o aktivnom igraču
+
+            praznaPolja[odabranoPolje]=aktivniIgrac;
+
+
+
+        // pomicanje slike (kružića) s grida (slika se ne vidi jer nema zadan source)
+        brojac.setTranslationY(-1000f);
+
+            //provjera tko je aktivni igrač, te odabir njegove boje kružića
+
+        if(aktivniIgrac==0){
+        brojac.setImageResource(R.drawable.yellow);
+
+            aktivniIgrac=1;
+        }
+
+        else{
+            brojac.setImageResource(R.drawable.red);
+
+            aktivniIgrac=0;
+
+        }
+
+            // postavljanje na grid odabranog kružića
+
+        brojac.animate().translationYBy(1000).setDuration(300);
+
+            // prolazak kroz pobjednickaMjesta array i provjera pobjednika
+
+            for(int[] pobjednickoMjesto: pobjednickaMjesta){
+
+                if(praznaPolja[pobjednickoMjesto[0]]==praznaPolja[pobjednickoMjesto[1]] &&
+                        praznaPolja[pobjednickoMjesto[1]]==praznaPolja[pobjednickoMjesto[2]]
+                        && praznaPolja[pobjednickoMjesto[0]]!=2)
+                {
+
+                    String pobjednik="Crveni";
+
+                   if( praznaPolja[pobjednickoMjesto[0]]==0){
+
+                       pobjednik="Žuti";
+
+                }
+                    aktivnaIgra=false;
+
+                    //postavljanje pop-upa koji ispisuje pobjednika te gumb koji nudi novu igru
+
+                    TextView novaIgra= (TextView) findViewById(R.id.porukaTextView);
+                    novaIgra.setText("Pobjednik je " + pobjednik);
+
+                    LinearLayout layout = (LinearLayout) findViewById(R.id.novaIgraLayout);
+                    layout.setVisibility(View.VISIBLE);
+                }
+
+                else{
+
+                    boolean zavrsenaIgra=true;
+
+                    for(int praznoPolje : praznaPolja){
+
+                        if(praznoPolje==2)
+
+                        zavrsenaIgra=false;
+                    }
+                    // provjerava mogućnost igre bez pobijednika
+
+                    if(zavrsenaIgra) {
+                        TextView novaIgra= (TextView) findViewById(R.id.porukaTextView);
+                        novaIgra.setText("Bez pobijednika");
+
+                        LinearLayout layout = (LinearLayout) findViewById(R.id.novaIgraLayout);
+                        layout.setVisibility(View.VISIBLE);
+
+
+
+                    }
+                }
+
+
+
+
+            }
+        }
+
+
+
+    }
+
+    // metoda koja resetira polja tj pokreće novu igru
+    
+    public void novaIgra(View view){
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.novaIgraLayout);
+        layout.setVisibility(View.INVISIBLE);
+
+         aktivniIgrac=0;
+
+
+
+        for(int i=0;i<praznaPolja.length;i++){
+
+            praznaPolja[i]=2;
+        }
+
+        GridLayout gridLayout = (GridLayout) findViewById(R.id.gridLayoutId);
+        for(int i=0;i<gridLayout.getChildCount();i++){
+
+            ((ImageView) gridLayout.getChildAt(i)).setImageResource(0);
+        }
+        aktivnaIgra=true;
+
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
