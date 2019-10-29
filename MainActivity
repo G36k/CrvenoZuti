@@ -1,3 +1,10 @@
+/* Ovo je klasa napravljena u Android Studiu, služi kao logika za igru Krizic-Kruzic, ali zbog jednostavnijeg nalaženja sličica koje su
+mi trebale umjesto križića i kružića su crveni i žuti krugovi :) */
+
+
+
+
+
 package com.milan.krizickruzic;
 
 import android.support.v7.app.AppCompatActivity;
